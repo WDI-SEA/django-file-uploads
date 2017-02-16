@@ -2,8 +2,9 @@
 
 {% block content %}
 <h1>Uploader</h1>
-<form>
-  <input type="file">
+<form action="/" method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  <input type="file" name="srt_file">
   <input type="submit">
 </form>
 {% endblock %}
