@@ -43,8 +43,8 @@ def parse_subtitles(subtitles):
     line1 = line1.strip()
     line2 = line2.strip()
 
-    line1 = line1.replace('"', "'")
-    line2 = line2.replace('"', "'")
+    line1 = line1.replace('"', '\\\"')
+    line2 = line2.replace('"', '\\\"')
 
     print("{")
     print("  duration: \"%s\"," % time)
