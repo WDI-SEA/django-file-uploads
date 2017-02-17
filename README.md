@@ -1,8 +1,10 @@
 If you fork and clone this repo from a fresh start you'll need to
-run a command to create a database Django expects to see.
+run a command to create a database Django expects to see. Then
+you should be able to run the server.
 
 ```
 createdb uploadsite
+python3 manage.py runserver
 ```
 
 ## Licensing
