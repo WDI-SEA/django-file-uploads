@@ -2,15 +2,17 @@ from django.shortcuts import render, redirect
 
 # Create your views here.
 def index(request):
-  if request.method == "GET":
-    return render(request, 'uploader/index.html')
+  context = {
+    "subtitles": ""
+  }
   if request.method == "POST":
     srt_file = request.FILES['srt_file']
-    handle_uploaded_file(srt_file)
-    return redirect('index')
+    context["subtitles"] = handle_uploaded_file(srt_file)
+    print(context)
+  return render(request, 'uploader/index.html', context)
   
 def handle_uploaded_file(file):
-  uploaded_filename = "out_test"
+  uploaded_filename = "./uploader/static/subtitles/out_test"
   # read the uploaded file and write it to disk.
   with open(uploaded_filename, 'wb+') as destination:
     for chunk in file.chunks():
@@ -19,10 +21,13 @@ def handle_uploaded_file(file):
   # open the file that we just write to disk and
   # send it to processing
   ffile = open(uploaded_filename)
-  parse_subtitles(ffile)
+  result = open(ffile.name + ".js", "w")
+  parse_subtitles(ffile, result)
+  result.close()
+  return open(result.name, "r").read()
 
-def parse_subtitles(subtitles):
-  print("var SUBTITLES = [")
+def parse_subtitles(subtitles, result):
+  result.write("var SUBTITLES = [")
   while True:
     line = subtitles.readline()
     if line == '':
@@ -46,9 +51,9 @@ def parse_subtitles(subtitles):
     line1 = line1.replace('"', '\\\"')
     line2 = line2.replace('"', '\\\"')
 
-    print("{")
-    print("  duration: \"%s\"," % time)
-    print("  line1: \"%s\"," % line1)
-    print("  line2: \"%s\"," % line2)
-    print("},")
-  print("];")
+    result.write("{\n")
+    result.write("  duration: \"%s\",\n" % time)
+    result.write("  line1: \"%s\",\n" % line1)
+    result.write("  line2: \"%s\",\n" % line2)
+    result.write("},\n")
+  result.write("];\n")
